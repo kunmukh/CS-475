@@ -1,0 +1,62 @@
+// File: chart.cpp
+// Skeleton class that models rectangular seating charts using 
+// dynamic one-dimensional array of booleans.  
+//    - seats[i][j] maps to seatArray[i*numSeats+j]
+//    - seats[i][j] == false means seat is unassigned
+//    - seats[i][j] == true means seat is assigned
+//
+// Row numbers are 0 ... numRows-1
+// Seat numbers are 0 ... numSeats-1
+// ----------------------------------------------------------------------
+// Class: CS 215
+// Date: March 28, & 30
+// Assignment: Programming Practical Exam 2, Problem 2
+// Programmer: *** FILL IN YOUR NAME ***
+
+#include <iostream>
+#include <string>
+#include "chart.h"
+
+// Explict-value constructor
+// Creates dynamic 2D "array" of seats
+SeatingChart::SeatingChart (int initRows, int initSeats)
+{
+   numRows = initRows;
+   numSeats = initSeats;
+
+}  // end explicit-value constructor
+
+
+// *** DEFINITIONS FOR DESTRUCTOR AND IsAssigned GO HERE  ***
+
+
+
+// Function: Assign
+// Assigns seat numbered seatNum in row numbered row
+void SeatingChart::Assign (int row, int seatNum)
+{
+   seatArray[row*numSeats+seatNum] = true;
+}  // end Assign
+
+
+// Function: Unassign
+// Unassigns seat numbered seat_num in row numbered row
+void SeatingChart::Unassign (int row, int seatNum)
+{
+   seatArray[row*numSeats+seatNum] = false;
+}  // end Unassign
+
+// Function: Write
+// Prints out X if the seat is assigned, 0 if seat is not assigned
+void SeatingChart::Write (std::ostream & out)
+{
+   for (int i = 0; i < numRows; i++)
+   {
+      for (int j = 0; j < numSeats; j++)
+         if (seatArray[i*numSeats+j])
+            out << " X";
+         else
+            out << " O";
+      out << std::endl;
+   }  // end for each row
+}  // end Write

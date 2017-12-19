@@ -1,0 +1,235 @@
+// File: boggle.cpp
+// <The programs searches through a grid of letter, to find a
+//  combinations of letter to form a word, that has been
+//  read from an input file. if the word is found, the
+//  programs prints out found, if not then printd  not-found.>
+//
+// ­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment: Programming Project 1 Date assigned: 1/27/2017
+// Programmer: Kunal Mukherjee       Date completed:1/30/2017
+//
+//-------------------------------------------------------------------
+
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <unistd.h>
+
+ struct Tile {
+     char letter;
+     bool used;
+   };
+
+const int GRID_SIZE = 7;
+
+void MakeGrid (Tile Grid[GRID_SIZE][GRID_SIZE],// REC'D&PASS'D - The grid
+	       std::ifstream& inFile); //REC'D/P'BACK: input file
+
+void PrintGrid (const Tile Grid[GRID_SIZE][GRID_SIZE]); //REC'D - The grid
+
+bool SearchFirstLetter (Tile Grid[GRID_SIZE][GRID_SIZE], // REC' grid
+			std::string word, // REC'D - The word
+			int rowIndex,  //REC'D&PASS'D -The row index
+			int colIndex, //REC'D&PASS'D - The col index
+			int wordIndex, //REC'D&PASS'D - The word index
+			int maxRow,   //REC'D&PASS'D- Max Rows
+			int maxCol);   //REC'D&PASS'D- Max Cols
+
+
+void SearchRestLetter (Tile Grid[GRID_SIZE][GRID_SIZE],  // REC'D - The grid
+		       std::string word,                        // REC'D - The word
+		       int RowIndex,                    //REC'D&PASS'D -The row index
+		       int ColIndex,                   // REC'D&PASS'D -The col  index
+		       int wordIndex,                   //REC'D&PASS'D - The word index
+		       bool &found);                 //REC'D&PASS'D - The search status    
+  
+
+int main(int argc, char *argv[])
+{
+   using namespace std;
+
+   if (argc != 3)
+   {
+     cout << "Usage: " << argv[0] << " input pridfile"
+	  << " output file " << endl;
+      exit(1);
+   }
+   
+   ifstream inFile (argv[1]);
+   if (!inFile)
+   {
+      cout << "Error: unable to open input  mazefile" << endl;
+      exit(1);
+   }
+
+   ofstream outFile (argv[2]);             
+   if (!outfile)                 
+    {
+       cout << "Error opening output file: " << argv[2] << endl;
+       exit(1);
+    }
+
+   Tile Grid[GRID_SIZE][GRID_SIZE];
+
+   MakeGrid(Grid, inFile);
+   PrintGrid(Grid);
+
+   string  word;
+   
+   while (inFile >> word)
+     {
+       int RowIndex = 1, ColIndex = 1, WordIndex = 0;
+       
+       
+       if (SearchFirstLetter(Grid, word, RowIndex, ColIndex, WordIndex,
+			     GRID_SIZE - 2, GRID_SIZE))
+	 {
+	   outfile << word << " " << "found" << endl;
+	 }
+       else
+	 {
+	   outfile << word << " " << "not found" << endl;
+	 }
+     }
+   
+   inFile.close();
+   outFile.close();
+}
+
+void MakeGrid (Tile Grid[GRID_SIZE][GRID_SIZE],std::ifstream &inFile)
+{
+  using namespace std;
+  
+  string word;
+  int counter;
+ 
+
+  for ( int r = 1; r < GRID_SIZE - 1; r++)
+    {
+       inFile >> word ;
+      for ( int c = 1; c < GRID_SIZE; c++)
+	{
+	  Grid[r][c].letter = word[c-1];
+	}
+    }
+
+   for (int r = 0; r < GRID_SIZE ; r++)
+    {
+      
+      Grid[r][0].letter = '*' ; //works
+      Grid[r][GRID_SIZE - 1].letter = '*';
+      
+    }
+
+  for ( int c = 0; c < GRID_SIZE ; c++)
+    {
+      Grid[0][c].letter = '*';
+      Grid[GRID_SIZE - 1][c].letter = '*';
+    }
+ 
+ 
+}
+
+void PrintGrid (const Tile Grid[GRID_SIZE][GRID_SIZE])
+{
+  using namespace std;
+  
+  cout << "\nGRID\n" << endl;
+   for ( int r = 1; r <= GRID_SIZE - 2; r++)
+     {
+       for ( int c = 1; c <= GRID_SIZE - 2; c++)
+	 {
+	   cout << " " << Grid[r][c].letter ;	   
+	 }
+       cout << endl;
+     }
+}
+	  
+bool SearchFirstLetter (Tile Grid[GRID_SIZE][GRID_SIZE],std:: string word,
+			int RowIndex, int ColIndex, int WordIndex,
+			int maxRow, int maxCol)
+{
+  bool found = false;
+  if (RowIndex <= maxRow)
+    {
+      if (word[WordIndex] == Grid[RowIndex][ColIndex].letter)
+	{      
+	  SearchRestLetter (Grid, word, RowIndex, ColIndex,
+			    WordIndex, found);
+	  return found; 
+	}
+      else if ( ColIndex <= maxCol)
+	{
+	  return SearchFirstLetter(Grid, word, RowIndex, ColIndex + 1,
+				   WordIndex, maxRow, maxCol);
+	}
+  
+      else  if (  ColIndex >  maxCol)
+	{
+	  return SearchFirstLetter(Grid, word, RowIndex + 1, 1 ,
+				   WordIndex, maxRow, maxCol);
+	}
+    }
+
+  return found; 
+}
+
+void SearchRestLetter (Tile Grid[GRID_SIZE][GRID_SIZE],std:: string word,int RowIndex,
+		        int ColIndex, int wordIndex, bool &found)
+{   
+  if ((Grid[RowIndex][ColIndex].letter != '*') && (Grid[RowIndex][ColIndex].used == false ))
+   {
+      
+     if (Grid[RowIndex][ColIndex].letter == word[word.length()-1])
+	 found = true;      
+     
+      
+      else if(Grid[RowIndex][ColIndex].used == false)
+	{
+	  if ((Grid[RowIndex][ColIndex].letter == word[wordIndex]) && !found)
+	      SearchRestLetter (Grid, word,  RowIndex, ColIndex, wordIndex+1, found);
+
+	     
+	      Grid[RowIndex][ColIndex].used = true; 	  
+	  
+	    if (!found)    
+	      SearchRestLetter (Grid, word , RowIndex-1, ColIndex, wordIndex, found);
+	    
+	    if (!found)    
+	      SearchRestLetter (Grid, word , RowIndex+1, ColIndex, wordIndex, found);
+	 
+	    if (!found)     
+	      SearchRestLetter (Grid, word,  RowIndex, ColIndex+1, wordIndex, found);
+	 
+	    if (!found) 
+	      SearchRestLetter (Grid, word , RowIndex, ColIndex-1, wordIndex, found);
+
+	    if (!found) 
+	      SearchRestLetter (Grid, word , RowIndex-1,ColIndex-1, wordIndex, found);
+	  
+	    if (!found) 
+	      SearchRestLetter (Grid, word , RowIndex-1,ColIndex+1, wordIndex, found);
+	   
+	    if (!found) 
+	      SearchRestLetter (Grid, word , RowIndex+1 , ColIndex-1, wordIndex, found);
+	   
+	    if (!found) 
+	      SearchRestLetter (Grid, word , RowIndex+1 ,ColIndex +1, wordIndex, found);
+	  
+	  
+	    if (!found)
+	      {
+		Grid[RowIndex][ColIndex].used = false;
+		found = false;	      
+	      }
+	 
+	}
+     
+   
+   }
+}
+      
+      
+	  

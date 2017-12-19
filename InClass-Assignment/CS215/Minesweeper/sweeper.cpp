@@ -1,0 +1,145 @@
+//File: sweeper.cpp
+// A driver program written to test the SweeperGrid  class and to create
+// a minesweeper game
+//-----------------------------------------------------------------
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment:    Minesweeper        Date assigned:  3/17/2017
+// Programmer:    Kunal Mukherjee    Date completed: 2/24/2017
+
+//directives are included
+#include <string>
+#include <iostream>
+#include <cstdlib>
+#include "sweepergrid.h"
+
+int main(int argc, char *argv[])
+{
+  using namespace std;
+
+  if (argc != 4)     
+   {
+      cout << "Usage: " << argv[0] <<
+	" row_number col_number bomb_number" << endl;
+      exit(1);
+   }
+
+  //converting the string values to interger and placing them in appropiate
+  //variable
+  int row = atoi(argv[1]);
+  int col = atoi(argv[2]);
+  int bomb = atoi(argv[3]);
+
+  try
+    {  
+      //creation of the grid
+      SweeperGrid grid1(row, col, bomb);  
+      //Print the grid out
+      grid1.WriteGrid(cout);
+       
+      //the command
+      char command = 'C';
+      //the location
+      int newRow, newCol;
+
+      
+      //The loop should go till the user hits a 'q' or he won
+      while (command != 'q' && !grid1.GameWon())
+	{
+
+	  cout << "Enter u to uncover, m to mark, k to unmark, q to quit: ";
+	  cin >> command;
+
+	  //if 'u' is entered
+	  if (command == 'u')
+	    {
+	       cout << "Enter a location (row col) to uncover: ";
+	      try
+		{		 
+		  cin >> newRow >> newCol;
+
+		  //if it has a mine then go to this loop
+		  if (grid1.Uncover(newRow, newCol))
+		    {
+		      cout << " You have uncovered a mine!!! Game Over" << endl;
+		      
+		      //Once the game is over; uncover all the cells
+		      for ( int i = 0; i < row; i++)
+			{
+			  for (int j = 0; j < col;j++)
+			    {
+			      grid1.Uncover(i,j);
+			    }
+			}
+
+		      //Once the cells are uncovered,Printout the cell
+		      grid1.WriteGrid(cout);
+		      return 0; 
+		    }
+		  else
+		    grid1.WriteGrid(cout);
+		}
+	      catch (string exception)
+		{
+		  cout << exception << endl;
+		}
+	    }
+	  
+	  //to mark the grid
+	  else if (command == 'm')
+	    {
+	      cout << "Enter a location (row col) to uncover: ";
+	      cin >> newRow >> newCol;
+	      try
+		{
+		  grid1.Mark(newRow, newCol);
+		  grid1.WriteGrid(cout);
+		}
+	      catch (string exception)
+		{
+		  cout << exception << endl;
+		}
+	    }
+
+	  //to unmark the grid
+	  else if (command == 'k')
+	    {
+	      cout << "Enter a location (row col) to uncover: ";
+	      cin >> newRow >> newCol;
+	      try
+		{
+		  grid1.Unmark(newRow, newCol);
+		  grid1.WriteGrid(cout);
+		}
+	      catch (string exception)
+		{
+		  cout << exception << endl;
+		}
+	    }	 
+	};
+      
+      if (grid1.GameWon())
+	{
+	  cout << "Congratulations !!! You have won the game." << endl;
+	  //Once the game is over; uncover all the cells
+	  for ( int i = 0; i < row; i++)
+	    {
+	      for (int j = 0; j < col;j++)
+		{
+		  grid1.Uncover(i,j);
+		}
+	    }
+
+	  //Once the cells are uncovered,Printout the cell
+	  grid1.WriteGrid(cout);
+	  return 0;
+	}
+  
+   }
+  //to catch the exception if the grid intital row and columns are too small
+  catch (string exception)
+    {
+      cout << exception << endl;
+    }
+  return 0;
+}
+  

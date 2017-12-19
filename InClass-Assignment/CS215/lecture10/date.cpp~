@@ -1,0 +1,90 @@
+// File: date.cpp
+// Contains the implementation of class Date
+// Based on Dale, et al., C++ Plus Data Structures, Chapter 2 Case Study
+
+#include "date.h"
+
+// Names of the months
+static std::string conversionTable[] = {"Error", "January", "February", 
+					"March", "April", "May", "June",
+					"July", "August", "September",
+					"October", "November", "December"};
+
+
+// to tell compiler that these functions belong to the class
+// use <classname> :: in front of operation names
+// allows functions to access the class data attributes directly
+
+Date::Date(){
+  month = 1;
+  day = 1;
+  year = 2017;
+}
+
+void Date::Initialize (int newMonth, int newDay, int newYear)
+{
+   month = newMonth;
+   day = newDay;
+   year = newYear;
+}
+
+int Date::GetMonth() const
+{
+   return month;
+}
+
+std::string Date::GetMonthAsString() const // :: is called scope operator
+{
+   return conversionTable[month];
+}
+
+int Date::GetYear() const
+{
+   return year;
+}
+
+int Date::GetDay() const
+{
+   return day;
+}
+
+//const goes in both prototype and function definition
+RelationType Date::CompareTo(Date rhs) const{
+  if(year < rhs.year){//operations can access private data of 
+                      //parameters of the class type
+    return LESS;}
+  if(year > rhs.year)
+    return GREATER;
+  if(month < rhs.month)
+    return LESS;
+  if(month > rhs.month)
+    return GREATER;
+
+  if(day < rhs.day)
+    return LESS;
+  if(day > rhs.day)
+    return GREATER;
+
+  return EQUAL;
+}
+
+//friend functions are not member functions, so there is no scope operator
+//no friend keyword either
+std::istream& operator>>(std::istream& in, Date& aDate)
+{
+  in >> aDate.month;
+  in.ignore(); //get rid of the slash
+  in >> aDate.day;
+  in.ignore(); //get rid of second slash
+  in >>aDate.year;
+
+  return in;
+  // in >> aDate.month >> aDate.day >> aDate.year;
+}
+  
+std::ostream& operator<<(std::ostream& out, Date& aDate)
+{
+  out << aDate.month << " '/' " << '/' << aDate.year;
+
+  return out;
+}
