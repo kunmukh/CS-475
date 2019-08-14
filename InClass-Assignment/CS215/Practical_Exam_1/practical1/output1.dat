@@ -1,9 +1,0 @@
-Ackermann(0,0) is 1
-Ackermann(1,1) is 3
-Ackermann(2,2) is 7
-Ackermann(3,0) is 5
-Ackermann(3,1) is 13
-Ackermann(3,2) is 29
-Ackermann(3,3) is 61
-Ackermann(3,4) is 125
-Ackermann(4,0) is 13

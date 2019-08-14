@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1504792397 source:/home/kunmukh/Documents/CS475/inclass/main.cpp
-	<iostream>
-	<sys/socket.h>
-	<netinet/in.h>
-	<arpa/inet.h>
-	<unistd.h>
-
