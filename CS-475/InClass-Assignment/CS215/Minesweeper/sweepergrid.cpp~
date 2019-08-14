@@ -1,0 +1,442 @@
+//File: sweepergrid.cpp
+// Implementation of the SweeperGrid class
+//-----------------------------------------------------------------
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment:    Minesweeper        Date assigned:  3/17/2017
+// Programmer:    Kunal Mukherjee    Date completed: 3/25/2017
+
+#include "sweepergrid.h"
+#include <cstdlib>
+#include <ctime>
+
+//Explicit-Value Constructor
+SweeperGrid::SweeperGrid(int initialRows, int initialCols, int initialBombs)
+{
+  //initialize the numRows
+  numRows = initialRows;
+  //initialize the numColumns
+  numColumns = initialCols;
+  //initialize the numBombs
+  numBombs = initialBombs;
+
+  // if initialCols and initialRows < 5 or if intialBombs will
+  //not create a grid
+  if (numRows < 5 || numColumns < 5)
+    {
+      throw std::string("Rows and Cols must be greater than 5");
+      exit(1);
+    }
+  
+  //bomb density
+  double bombDensity = double (numBombs) / (numRows * numColumns);
+ 
+ //not create a bomb density between 15% and 50%, it should exit
+ if (bombDensity > 0.5 ||  bombDensity < 0.15)
+    {
+      throw std::string("Bomb  Density must be in-between 15% to 50%");
+      exit(2);
+    }
+  
+  //allocates the memory for the cell
+  gridArray = new SweeperCell[numRows * numColumns];  
+  
+  //seed the random number generator
+  srand(time(0));
+  
+  //Row of the bomb to be put in
+  int rowBomb;
+  //Col of the bomb to be put in
+  int colBomb;
+  //number of bombs needed
+  int bombNeed = numBombs;  
+
+  //The loop should continue till all the bombs has been placed
+  while (bombNeed > 0)
+    {
+     
+      //a random row and column to be selected
+      rowBomb = rand() % numRows;
+      colBomb = rand() % numColumns;     
+
+      //if the cell does not already have a bomb then a bomb to be placed
+      if(!gridArray[Place(rowBomb, colBomb)].HasBomb())
+  	{
+	  gridArray[Place(rowBomb, colBomb)].PlaceBomb();
+	  bombNeed--;
+  	}
+    }
+  
+	       //a nested loop to put put the number of bomb in adjacent cells
+  for (int i = 0; i < numRows; i++)
+    {
+      for (int j = 0; j < numColumns; j++)
+	{
+	 
+	  // If adjacent cell have bomb then increment
+	  //the number of bomb
+	  //top
+	  if ((i-1) >= 0
+	      && gridArray[Place (i-1,j)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	  //bottom
+	  if ((i+1) < numRows
+	      && gridArray[Place(i+1,j)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	  //left
+	  if ((j-1) >= 0
+	      && gridArray[Place(i,j-1)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	  //right
+	  if ((j+1) < numColumns
+	      && gridArray[Place(i,j+1)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	  //top-left
+	  if (((i-1) >= 0) && (j-1) >= 0
+	      && gridArray[Place(i-1,j-1)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	     
+	  //lower-left
+	  if ((i+1) < numRows && (j-1) >= 0
+	      && gridArray[Place(i+1,j-1)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	      
+	  //top-right
+	  if ((i-1) >= 0 && (j+1) < numColumns
+	      && gridArray[Place(i-1,j+1)].HasBomb())
+	    gridArray[Place(i,j)].IncrNumAdjacent();
+	     
+	  //lower-right
+	  if ((i+1) < numRows && (j+1) < numColumns
+	      && gridArray[Place(i+1,j+1)].HasBomb())
+ 	    gridArray[Place(i,j)].IncrNumAdjacent();
+	      
+	}
+    }
+
+  //This code can be uncommed to get the grids that does not have a bomb
+   // for (int i = 0; i < numRows; i++)
+   //  {
+   //    for (int j = 0; j < numColumns; j++)
+   // 	{
+   // 	  if (!gridArray[Place(i,j)].HasBomb())
+   // 	    std::cout << i << " " << j << std::endl;
+   // 	}
+   //  }
+}
+
+//Default Constructor
+SweeperGrid::SweeperGrid()
+{
+//initialize the numRows
+  numRows = 8;
+  //initialize the numColumns
+  numColumns = 8;
+  //initialize the numBombs
+  numBombs = 10;
+
+   //allocates the memory for the cell
+  gridArray = new SweeperCell[numRows * numColumns];  
+  
+  //seed the random number generator
+  srand(time(0));
+  
+  //Row of the bomb to be put in
+  int rowBomb;
+  //Col of the bomb to be put in
+  int colBomb;
+  //number of bombs needed
+  int bombNeed = numBombs;  
+
+  //The loop should continue till all the bombs has been placed
+  while(bombNeed > 0)
+    {
+      //a random row and columber to be selecter
+      rowBomb = rand() % numRows;
+      colBomb = rand() % numColumns;
+
+      //if the cell does not already have a bomb then a bomb to be placed
+      if(!gridArray[Place(rowBomb, colBomb)].HasBomb())
+  	{
+  	  gridArray[Place(rowBomb, colBomb)].PlaceBomb();      
+  	  bombNeed--;
+  	}
+    }
+
+   //a nested loop to put put the number of bomb in adjacent cells
+  for (int i = 0; i < numRows; i++)
+    {
+      for (int j = 0; j < numColumns; j++)
+	{
+	  if(!gridArray[i * numRows + j].HasBomb())
+	    {
+	      // If adjacent cell have bomb then increment
+	      //the number of bomb
+	      //top
+	      if ((i-1) >= 0
+		  && gridArray[Place (i-1,j)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	      //bottom
+	      if ((i+1) < numRows
+		  && gridArray[Place(i+1,j)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	      //left
+	      if ((j-1) >= 0
+		  && gridArray[Place(i,j-1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	      //right
+	      if ((j+1) < numColumns
+		  && gridArray[Place(i,j+1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	      //top-left
+	      if (((i-1) >= 0) && (j-1) >= 0
+		  && gridArray[Place(i-1,j-1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	     
+	      //lower-left
+	      if ((i+1) < numRows && (j-1) >= 0
+		  && gridArray[Place(i+1,j-1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	      
+	      //top-right
+	      if ((i-1) >= 0 && (j+1) < numColumns
+		  && gridArray[Place(i-1,j+1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	     
+	      //lower-right
+	      if ((i+1) < numRows && (j+1) < numColumns
+		  && gridArray[Place(i+1,j+1)].HasBomb())
+		gridArray[Place(i,j)].IncrNumAdjacent();
+	    }
+	}
+    }  
+}
+
+//Destructor
+SweeperGrid::~SweeperGrid()
+{
+  delete [] gridArray; //deallocate the array
+}
+
+//GetRows
+int SweeperGrid::GetRows() const
+{
+  return numRows;
+}
+
+//GetColumns
+int SweeperGrid::GetColumns() const
+{
+  return numColumns;
+}
+
+//GetBombs
+int SweeperGrid::GetBombs() const
+{
+  return numBombs;
+}
+
+//GameWon
+bool SweeperGrid::GameWon() const
+{  
+  int covered = 0;
+  int marked = 0;
+  int markedNot = 0;
+  
+  for (int row = 0; row < numRows; row++)
+    {
+      for (int col = 0; col < numColumns; col++)
+	{
+	  //if it is covered and has a bomb
+	  if (gridArray[Place(row,col)].IsCovered() &&
+	      gridArray[Place(row,col)].HasBomb())
+	    {	      
+	      covered++;
+	    }
+	  //if it is marked and has a bomb
+	  if (gridArray[Place(row,col)].IsMarked() &&
+	      gridArray[Place(row,col)].HasBomb())
+	    {	     
+	      marked++;
+	    }
+	  //if it is marked and doesnot have a bomb
+	  //and it it is covered and has a bomb
+	  if ((gridArray[Place(row,col)].IsMarked() &&
+	       !gridArray[!Place(row,col)].HasBomb()) ||
+	      (gridArray[Place(row,col)].IsCovered() &&
+	       !gridArray[Place(row,col)].HasBomb()))
+	       
+	    {	     
+	      markedNot++;
+	    }	  
+	}
+    }
+
+  //if the marked and covered has the same number of bombs
+  // and no cell is marked and doesnot have a bomb or is covered and
+  //has a bomb then return true
+  if (covered + marked == numBombs && markedNot == 0 )
+    return true;
+
+  return false;
+}
+
+
+//Place the bomb
+void SweeperGrid::PlaceBomb(int row, int col)
+{
+  if ((row < numRows && row >= 0) && (col < numColumns && col >= 0))
+    {
+      if (!gridArray[Place(row,col)].HasBomb())
+	{
+	  //Place a bomb in the grid
+	  gridArray[Place(row,col)].PlaceBomb();
+	  
+	  //Increse the number of bomb count
+	  numBombs++;
+		 
+	  //If adjacent cell have bomb then increment
+	  //the number of bomb		   
+	  //top
+	  if ((row-1) >= 0)
+	    gridArray[Place(row-1,col)].IncrNumAdjacent();
+	  //bottom
+	  if ((row+1) < numRows)
+	    gridArray[Place(row+1,col)].IncrNumAdjacent();
+	  //left
+	  if ((col-1) >= 0)
+	    gridArray[Place(row,col-1)].IncrNumAdjacent();
+	  //right
+	  if((col+1) < numColumns)
+	    gridArray[Place(row,col+1)].IncrNumAdjacent();
+		   
+	  //top-left
+	  if((row-1) >= 0 && (col-1) >= 0)
+	    gridArray[Place(row-1,col-1)].IncrNumAdjacent();
+	  //top-right 
+	  if((row-1) >= 0 && (col+1) < numColumns)
+	    gridArray[Place(row-1,col+1)].IncrNumAdjacent();
+		  
+	  //bottom-left
+	  if ((row+1) < numRows && (col-1) >= 0)
+	    gridArray[Place(row+1,col-1)].IncrNumAdjacent();	 
+	  //bottom-right
+	  if ((row+1) < numRows && (col+1) < numColumns)
+	    gridArray[Place(row+1,col+1)].IncrNumAdjacent();
+	}
+    }      
+    
+ else
+   {
+    throw std::string("Location not within the bound of the grid");
+   }
+}
+
+
+//remove the bomb
+void SweeperGrid::RemoveBomb(int row, int col)
+{
+  if ((row < numRows && row >= 0) && (col < numColumns && col >= 0))
+    {
+      if (gridArray[Place(row,col)].HasBomb())
+	{
+	  //Place a bomb in the grid
+	  gridArray[Place(row,col)].RemoveBomb();
+	  //decrrease the number of bombs count
+	  numBombs--;	  
+
+	  //If adjacent cell have bomb then decrement
+	  //the number of bomb		   
+	  //top
+	  if ((row-1) >= 0)
+	    gridArray[Place(row-1,col)].DecrNumAdjacent();
+	  //bottom
+	  if ((row+1) < numRows)
+	    gridArray[Place(row+1,col)].DecrNumAdjacent();
+	  //left
+	  if ((col-1) >= 0)
+	    gridArray[Place(row,col-1)].DecrNumAdjacent();
+	  //right
+	  if((col+1) < numColumns)
+	    gridArray[Place(row,col+1)].DecrNumAdjacent();
+		   
+	  //top-left
+	  if((row-1) >= 0 && (col-1) >= 0)
+	    gridArray[Place(row-1,col-1)].DecrNumAdjacent();
+	  //top-right 
+	  if((row-1) >= 0 && (col+1) < numColumns)
+	    gridArray[Place(row-1,col+1)].DecrNumAdjacent();
+		  
+	  //bottom-left
+	  if ((row+1) < numRows && (col-1) >= 0)
+	    gridArray[Place(row+1,col-1)].DecrNumAdjacent();	 
+	  //bottom-right
+	  if ((row+1) < numRows && (col+1) < numColumns)
+	    gridArray[Place(row+1,col+1)].DecrNumAdjacent();
+	}
+    }
+  
+  else
+    {
+      throw std::string("Location not within the bound of the grid.");
+    }
+}
+
+//uncover
+bool SweeperGrid::Uncover(int row, int col)
+{
+  if ((row < numRows && row >= 0) && (col < numColumns && col >= 0))
+    {
+      bool found;
+      found =  gridArray[Place(row,col)].Uncover();
+      return found;
+    }
+   else
+    throw std::string("Location not within the bound of the grid.");
+   
+}
+
+//Mark the cell
+void SweeperGrid::Mark(int row, int col) 
+{
+  if ((row < numRows && row >= 0) && (col < numColumns && col >= 0))
+    {      
+      //Mark the Cell
+      gridArray[Place(row,col)].Mark();
+    }
+   else
+    throw std::string("Location not within the bound of the grid.");
+}
+
+//unmark the cell
+void SweeperGrid::Unmark(int row, int col) 
+{
+   if ((row < numRows && row >= 0) && (col < numColumns && col >= 0))
+    {      
+      //Unmark the cell
+      gridArray[Place(row,col)].Unmark();     
+    }
+   else
+    throw std::string("Location not within the bound of the grid.");
+}
+
+//Writes the grid number
+void SweeperGrid::WriteGrid (std::ostream &out) const
+{  
+  for (int i = 0; i < numRows; i++)
+    {     
+      for (int j = 0; j < numColumns; j++)
+	{ 	      
+	  out << "  " << gridArray[Place(i,j)];	      
+	}
+       out << std::endl;
+    }  
+}
+
+//Place function
+int SweeperGrid::Place( int row, int col) const
+{
+  //calculates the grid number based on row and col
+  int place = ( row * numColumns + col);
+  //return the calculated grid
+  return place;
+}

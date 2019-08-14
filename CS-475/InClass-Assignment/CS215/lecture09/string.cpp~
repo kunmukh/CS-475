@@ -1,0 +1,20 @@
+#include<string>
+#include<iostream>
+
+int main()
+{
+  using namespace std;
+
+  string word1 = "hot", word2 = "dog";
+  string word 3;
+
+  word3 = word1 + word2;
+
+  cout << word1 << " + " << word2 << " = " << word3 << endl;
+
+  cout << "First letter in"  << word1 << " is " << word1[0] << endl;
+  cout << "Last letter in " << word1 << " is " << word1[word1.length()-1] << endl;
+  cout << "First letter in " << word2 " is " << word2.at(0) << endl;
+  cout << "Last letter in " << word2 << "is " << word2.at(word2.length()) << endl;
+  return 0;
+}

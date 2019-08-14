@@ -1,0 +1,11 @@
+#include <iostream>
+
+int main(int argc, char*argv[])
+{
+using namespace std;
+for (int i =; i < argc; i++)
+cout << "arg[" << i;
+cout << "]=" <<argv[i] << endl
+
+return 0;
+}

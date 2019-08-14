@@ -1,0 +1,9 @@
+#include<iostream>
+#include<cstdio>
+
+int main()
+{
+  using std;
+  ::cout << "This is a test" << endl
+      return 0;
+}

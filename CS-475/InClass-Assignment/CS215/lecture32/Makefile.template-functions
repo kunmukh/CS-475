@@ -1,0 +1,15 @@
+# File: Makefile
+# Makefile for template function examples
+# Class: CS 215
+
+template-functions: template-functions.o date.o
+	clang++ -g -Wall -o template-functions template-functions.o date.o
+
+template-functions.o: template-functions.cpp
+	clang++ -g -Wall -c template-functions.cpp
+
+date.o: date.cpp date.h
+	clang++ -g -Wall -c date.cpp
+
+clean:
+	rm -f *.o template-functions *~

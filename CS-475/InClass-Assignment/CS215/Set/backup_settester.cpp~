@@ -1,0 +1,71 @@
+//File: settester.cpp
+// Declare a class to represent set Card Date and its required
+//functions
+//-----------------------------------------------------------------
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment:    setcard.h          Date assigned:  2/2/2017
+// Programmer:    Kunal Mukherjee    Date completed: 9/2/2017
+
+#include <iostream>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include "setcard.h"
+
+
+int main (int argc, char *argv[])
+{
+  using namespace std;
+  
+  if (argc != 3)
+    {
+      cout << "Usage:" << argv[0] << "inputfile outputfile" << endl;
+    }
+  
+  ifstream inFile (argv[1]);
+
+  if (!inFile)
+    {
+      cout << "Error opening input file: " << argv[1] << endl;
+    }
+
+  ofstream outFile (argv[2]);
+
+  if (!outFile)
+    {
+      cout << "Error opening output file: " << argv[2] << endl;
+    }
+
+  int number;
+  char color, shade, shape;
+
+  SetCard card, card2, card3;
+
+  inFile >> number >> color >> shade >> shape;
+  setcard.Initialize(number, color, shade, shape);
+
+  inFile >> card2;
+  inFile >> card3;
+
+  outFile << "SET TESTER" << endl;
+
+  switch(setcard.IsSet(card2, card3))
+    {
+    case TRUE:
+      outFile <<number<<color<<shade<<shape<< ":" << card.ToString() << endl;
+      outFile << "make up a set" << endl;
+      
+    case FALSE:
+      outFile <<number<<color<<shade<<shape<< ":" << card.ToString() << endl;
+      outFile << "do not make up a set" << endl;
+    }
+
+    inFile.close();
+    outFile.close();
+    
+    return 0;
+
+
+}
+
+  

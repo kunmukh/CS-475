@@ -1,0 +1,55 @@
+//File: setcard.h
+// Declare a class to represent set Card Date and its required
+//functions
+//-----------------------------------------------------------------
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment:    setcard.h          Date assigned:  2/2/2017
+// Programmer:    Kunal Mukherjee    Date completed: 9/2/2017
+
+
+#include <string>
+#include <iosteam>
+
+#ifndef SetCard
+#define SetCard
+
+enum ColorType {RED, GREEEN, PURPLE};
+enum ShadeType {SOLID, STRIPED, OPEN};
+enum ShapeType {DIAMOND, SQUIGGLE, OVAL};
+
+class SetCard
+{
+  public:
+
+  SetCard();
+
+  void Initialize(int newNumber, ColorType newColor, ShadeType newShade, ShapeType newShape);
+
+  int GetNumber() const;
+
+  ColorType GetColor() const;
+
+  ShadeType GetShade() const;
+
+  ShapeType GetShape() const;
+
+  bool IsSet(SetCard card2, SetCard card3) const;
+
+  std::string ToString() const;
+
+  friend std::istream &operator >> (std::istream &in, SetCard &aCard);
+
+  friend std::ostream &operator << (std::ostream &out, SetCard &aCard);
+  
+
+  private:
+
+  int number;
+  
+  ColorType color;
+  
+  ShadeType shade;
+  
+  ShapeType shape;
+  
+};

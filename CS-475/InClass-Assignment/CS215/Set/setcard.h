@@ -1,0 +1,76 @@
+//File: setcard.h
+// Declare a class to represent set Card Date and its required
+//functions
+//-----------------------------------------------------------------
+// Class: CS 215                     Instructor: Dr. Deborah Hwang
+// Assignment:    setcard.h          Date assigned:  2/2/2017
+// Programmer:    Kunal Mukherjee    Date completed: 9/2/2017
+
+
+#include <string>
+#include <iostream>
+
+//if this symbol is undefined, then proceed
+//                  defined, then skip to #endif
+#ifndef SETCARD_H  
+#define SETCARD_H
+
+//creation of nee data type, as specififed by the project
+enum ColorType {RED, GREEN, PURPLE};
+enum ShadeType {SOLID, STRIPED, OPEN};
+enum ShapeType {DIAMOND, SQUIGGLE, OVAL};
+
+//SetCard class specification here
+class SetCard
+{
+ public: //prototype of the operations stored here
+         // public memeber of the class
+
+  SetCard(); //default constructor
+
+  //Initializes this cardtype as specified by the user
+  void Initialize(int newNumber,  //REC'D: a new number
+		  ColorType newColor,//REC'D:a new color 
+		  ShadeType newShade,//REC'D:a new shade
+		  ShapeType newShape);//REC'D:a new shape
+                                      // nothing is returned
+
+  int GetNumber() const; //returns the number
+
+  ColorType GetColor() const; //returns the color
+
+  ShadeType GetShade() const; //returns the shade
+
+  ShapeType GetShape() const; //returns the shape
+
+  bool IsSet(SetCard card2, // REC'D: a setcard2 for comparing
+	     SetCard card3) const;// REC'D: a setcard3 for comparin
+                                  // returns a boolean value
+
+  std::string ToString() const;//returns the set value as a string
+
+  // friend overloaded operator function that reads the SET card
+  //value from the input stream, without prompting, in encoded
+  //format
+  friend std::istream &operator >> (std::istream &in,//REC'D,PASBK & RET
+				    SetCard &aCard); // PASSEDBK
+
+  // friend overloaded operator function that prints SET card attributes
+  // to an output streamin the format readable by the operator
+  friend std::ostream &operator << (std::ostream &out,//REC'D,PASBK & RET
+				    SetCard aCard);// PASSEDB
+  
+
+ private:// the private member of the class
+
+  int number; // interger number
+  
+  ColorType color; //colortype color
+  
+  ShadeType shade; // shadetype shade
+  
+  ShapeType shape; // shapetype shape
+  
+};
+
+#endif
